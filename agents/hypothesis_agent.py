@@ -69,6 +69,7 @@ class HypothesisAgent:
             return self._heuristic_fallback(persona)
 
     def _heuristic_fallback(self, persona: Persona) -> HypothesisOutput:
+        # Deterministic fallback profiles keep the demo runnable without an API key.
         if persona.name == "Distributed Systems Expert":
             payload = {
                 "persona": persona.name,

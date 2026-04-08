@@ -1,9 +1,9 @@
 # Logos: A Memory-Augmented Multi-Agent Debugging System
 
-Logos is a memory-augmented multi-agent system for root cause analysis.
+Logos is a multi-agent system for root cause analysis.
 
 Pitch:
-`Logos is a multi-agent debugging system that uses AlloyDB to remember past failures and reason about new ones.`
+`Logos is a multi-agent debugging system that can use a memory backend (for example AlloyDB) to remember past failures and reason about new ones.`
 
 Demo hook:
 `Most debugging tools show you what broke. Logos tells you why, and remembers it.`
@@ -176,7 +176,15 @@ Design goals:
 - Gemini SDK LLM wrapper
 - Fallback mode for offline/demo reliability
 
-## 10) Quick Demo Files
+## 10) Why Some Values Are Hardcoded
+
+Some constants are intentionally fixed for demo reliability:
+- `demo/sample_*` files contain intentionally broken sample data.
+- Fallback hypotheses/confidence values are deterministic so output still works without `GEMINI_API_KEY`.
+- Default model/temperature are set in `utils/config.py` but can be overridden by `.env`.
+- `cloudbuild.yaml` uses a fixed default region (`asia-southeast1`) and can be edited per deployment.
+
+## 11) Quick Demo Files
 
 - Logs: `demo/sample_logs.txt`
 - Code: `demo/sample_code.py`
