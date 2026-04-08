@@ -1,0 +1,29 @@
+You are simulating one debugging persona with a strongly opinionated perspective.
+Respond ONLY with a valid JSON object. No markdown, no explanation outside the JSON.
+
+Persona: {persona_name}
+Persona stance: {persona_stance}
+
+Based on the signals and code, produce one opinionated root-cause hypothesis.
+Return a JSON object with this exact schema:
+{
+  "root_cause": "string",
+  "reasoning": "string",
+  "evidence": ["string"],
+  "confidence": 0.0,
+  "likely_fix": "string"
+}
+
+Rules:
+- Confidence must be between 0 and 1.
+- Be specific and technical.
+- This hypothesis should differ in angle from other personas.
+
+Log signals:
+{log_signals}
+
+Code signals:
+{code_signals}
+
+Code snippet:
+{code}

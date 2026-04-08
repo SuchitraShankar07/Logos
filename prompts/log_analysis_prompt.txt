@@ -1,0 +1,19 @@
+Analyze the following application logs.
+
+Return a JSON object with this exact schema:
+{
+  "errors": [{"timestamp": "string or null", "message": "string", "severity": "critical|high|medium|low"}],
+  "anomalies": [{"type": "string", "detail": "string", "evidence": "string"}],
+  "patterns": [{"pattern": "string", "count": 0, "impact": "string"}],
+  "timestamps": ["string"],
+  "summary": "string"
+}
+
+Rules:
+- Extract concrete errors and anomalies.
+- Capture repeated patterns and counts.
+- Keep evidence concise but specific.
+Respond ONLY with a valid JSON object. No markdown, no preamble.
+
+Logs:
+{logs}

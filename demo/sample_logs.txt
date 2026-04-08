@@ -1,0 +1,14 @@
+2026-04-08T08:10:01Z INFO request_id=7ad1 endpoint=/orders user_id=882 latency_ms=210
+2026-04-08T08:10:02Z INFO request_id=7ad2 endpoint=/orders user_id=551 latency_ms=245
+2026-04-08T08:10:05Z WARN request_id=7ad3 endpoint=/orders db_wait_ms=980
+2026-04-08T08:10:06Z ERROR request_id=7ad3 exception=TimeoutError detail="Query timed out after 1.0s" retry=1
+2026-04-08T08:10:06Z WARN request_id=7ad3 detail="retrying get_user_orders" retry=2
+2026-04-08T08:10:07Z ERROR request_id=7ad3 exception=TimeoutError detail="Query timed out after 1.0s" retry=2
+2026-04-08T08:10:07Z WARN request_id=7ad3 detail="retrying get_user_orders" retry=3
+2026-04-08T08:10:08Z ERROR request_id=7ad3 exception=TimeoutError detail="Query timed out after 1.0s" retry=3
+2026-04-08T08:10:08Z ERROR request_id=7ad3 exception=HTTPException status=504 detail="Upstream database timeout"
+2026-04-08T08:10:09Z ERROR sqlalchemy.exc.TimeoutError QueuePool limit of size 5 overflow 0 reached, connection timed out, timeout 1.00
+2026-04-08T08:10:10Z WARN request_id=7ad9 endpoint=/orders db_wait_ms=1400 latency_ms=4210
+2026-04-08T08:10:11Z ERROR request_id=7ad9 exception=OperationalError detail="could not obtain connection from pool"
+2026-04-08T08:10:11Z INFO request_id=7adb endpoint=/health latency_ms=12
+2026-04-08T08:10:12Z ERROR request_id=7adc exception=HTTPException status=503 detail="Service temporarily overloaded"
