@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from collections import Counter
 
@@ -13,9 +14,13 @@ class LogAnalysisAgent:
     def __init__(self, llm: LLMClient):
         self.llm = llm
 
-    def run(self, logs: str) -> LogAnalysisOutput:
+    def run(self, logs: str, retrieved_incidents: list[dict] | None = None) -> LogAnalysisOutput:
         system_prompt = load_prompt(PROMPTS_DIR / "system_general.txt")
-        user_prompt = load_prompt(PROMPTS_DIR / "log_analysis_prompt.txt", logs=logs)
+        user_prompt = load_prompt(
+            PROMPTS_DIR / "log_analysis_prompt.txt",
+            logs=logs,
+            retrieved_incidents=json.dumps(retrieved_incidents or [], indent=2),
+        )
 
         try:
             payload = self.llm.json_completion(system_prompt, user_prompt)

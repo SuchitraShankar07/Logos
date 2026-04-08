@@ -13,12 +13,18 @@ class CodeAnalysisAgent:
     def __init__(self, llm: LLMClient):
         self.llm = llm
 
-    def run(self, code: str, log_analysis: dict) -> CodeAnalysisOutput:
+    def run(
+        self,
+        code: str,
+        log_analysis: dict,
+        retrieved_incidents: list[dict] | None = None,
+    ) -> CodeAnalysisOutput:
         system_prompt = load_prompt(PROMPTS_DIR / "system_general.txt")
         user_prompt = load_prompt(
             PROMPTS_DIR / "code_analysis_prompt.txt",
             code=code,
             log_signals=json.dumps(log_analysis, indent=2),
+            retrieved_incidents=json.dumps(retrieved_incidents or [], indent=2),
         )
 
         try:

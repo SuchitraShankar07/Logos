@@ -18,6 +18,11 @@ Rules:
 - Confidence must be between 0 and 1.
 - Be specific and technical.
 - This hypothesis should differ in angle from other personas.
+ - Use historical context as supporting evidence.
+ - Do not blindly copy past incidents; compare patterns and explain fit.
+
+Historical Context:
+{retrieved_incidents}
 
 Log signals:
 {log_signals}

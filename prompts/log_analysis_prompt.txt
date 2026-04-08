@@ -13,7 +13,12 @@ Rules:
 - Extract concrete errors and anomalies.
 - Capture repeated patterns and counts.
 - Keep evidence concise but specific.
+ - Use historical context as supporting evidence.
+ - Do not blindly copy past incidents; compare patterns and explain fit.
 Respond ONLY with a valid JSON object. No markdown, no preamble.
+
+Historical Context:
+{retrieved_incidents}
 
 Logs:
 {logs}

@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from agents import CodeAnalysisAgent, HypothesisAgent, JudgeAgent, LogAnalysisAgent
 from utils.config import load_config
+from utils.db import init_db, retrieve_similar_incidents
 from utils.llm import LLMClient
 from utils.pipeline import MultiAgentDebugger
 
@@ -23,6 +24,7 @@ pipeline = MultiAgentDebugger(
     hypothesis_agent=HypothesisAgent(llm),
     judge_agent=JudgeAgent(llm),
 )
+init_db()
 
 app = FastAPI(title="Logos Debugging Engine", version="1.0.0")
 
@@ -34,5 +36,13 @@ def health() -> dict:
 
 @app.post("/debug")
 def debug(request: DebugRequest) -> dict:
-    result = pipeline.run(logs=request.logs, code=request.code, verbose=request.verbose)
-    return result.model_dump()
+    retrieved_incidents = retrieve_similar_incidents(request.logs, limit=3)
+    result = pipeline.run(
+        logs=request.logs,
+        code=request.code,
+        verbose=request.verbose,
+        retrieved_incidents=retrieved_incidents,
+    )
+    payload = result.model_dump()
+    payload["retrieved_incidents"] = retrieved_incidents
+    return payload

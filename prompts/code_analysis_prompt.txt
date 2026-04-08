@@ -11,7 +11,12 @@ Rules:
 - Use both code and log signals.
 - Highlight likely failure points and dangerous coding patterns.
 - Keep line references human-readable (e.g., "line 14" if known).
+ - Use historical context as supporting evidence.
+ - Do not blindly copy past incidents; compare patterns and explain fit.
 Respond ONLY with a valid JSON object. No markdown, no preamble.
+
+Historical Context:
+{retrieved_incidents}
 
 Log signals:
 {log_signals}

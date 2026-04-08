@@ -30,6 +30,7 @@ project-root/
 ├── utils/
 │   ├── __init__.py
 │   ├── config.py
+│   ├── db.py
 │   ├── formatting.py
 │   ├── io.py
 │   ├── llm.py
@@ -52,6 +53,7 @@ Input:
 - Code snippet
 
 Output:
+- Retrieved similar incidents from memory (`retrieved_incidents`)
 - Structured log signals (errors, anomalies, patterns, timestamps)
 - Code risk analysis
 - 3 competing hypotheses from distinct personas:
@@ -79,11 +81,18 @@ Set environment variables in `.env`:
 
 ```bash
 GEMINI_API_KEY=<your_key>
-GEMINI_MODEL=gemini-2.0-flash
+GEMINI_MODEL=gemini-2.5-flash
 GEMINI_TEMPERATURE=0.2
+
+DB_HOST=<alloydb_or_postgres_host>
+DB_PORT=5432
+DB_NAME=debugger
+DB_USER=postgres
+DB_PASSWORD=<password>
 ```
 
 Note: If `GEMINI_API_KEY` is not set, the system runs in heuristic fallback mode so demo still works.
+If DB vars are missing, memory retrieval/storage is skipped safely.
 
 ## 5) Run Locally (CLI)
 
@@ -142,6 +151,23 @@ curl -X POST http://127.0.0.1:8000/debug \
 JSON
 ```
 
+`POST /debug` now also returns:
+
+```json
+{
+  "retrieved_incidents": [
+    {
+      "id": 12,
+      "final_diagnosis": "connection pool exhaustion due to retry storm",
+      "created_at": "2026-04-08T12:00:00",
+      "logs_excerpt": "...",
+      "signals": {},
+      "hypotheses": []
+    }
+  ]
+}
+```
+
 ## 8) Deployment
 
 ### Docker
@@ -168,15 +194,36 @@ Pipeline order:
 2. `CodeAnalysisAgent` maps code risks to runtime signals.
 3. `HypothesisAgent` runs three personas with differing bias.
 4. `JudgeAgent` ranks hypotheses and returns final diagnosis/fix/tests.
+5. Memory layer stores the completed incident back into AlloyDB.
 
 Design goals:
 - Modular agents
 - Prompt files separated from logic
 - Structured Pydantic schemas
 - Gemini SDK LLM wrapper
+- AlloyDB-backed persistent memory and retrieval
 - Fallback mode for offline/demo reliability
 
-## 10) Why Some Values Are Hardcoded
+## 10) AlloyDB Setup (Phase 2)
+
+Use any PostgreSQL-compatible AlloyDB endpoint.
+
+```sql
+CREATE TABLE IF NOT EXISTS incidents (
+  id SERIAL PRIMARY KEY,
+  logs TEXT,
+  code TEXT,
+  signals JSONB,
+  hypotheses JSONB,
+  final_diagnosis TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+The app auto-runs `init_db()` on startup and before pipeline retrieval.
+Memory retrieval currently uses keyword-based `ILIKE` matching for speed and reliability.
+
+## 11) Why Some Values Are Hardcoded
 
 Some constants are intentionally fixed for demo reliability:
 - `demo/sample_*` files contain intentionally broken sample data.
@@ -184,7 +231,7 @@ Some constants are intentionally fixed for demo reliability:
 - Default model/temperature are set in `utils/config.py` but can be overridden by `.env`.
 - `cloudbuild.yaml` uses a fixed default region (`asia-southeast1`) and can be edited per deployment.
 
-## 11) Quick Demo Files
+## 12) Quick Demo Files
 
 - Logs: `demo/sample_logs.txt`
 - Code: `demo/sample_code.py`

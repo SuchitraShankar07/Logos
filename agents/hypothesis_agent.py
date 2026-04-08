@@ -50,6 +50,7 @@ class HypothesisAgent:
         log_analysis: dict,
         code_analysis: dict,
         code: str,
+        retrieved_incidents: list[dict] | None = None,
     ) -> HypothesisOutput:
         system_prompt = load_prompt(PROMPTS_DIR / "system_general.txt")
         user_prompt = load_prompt(
@@ -59,6 +60,7 @@ class HypothesisAgent:
             log_signals=json.dumps(log_analysis, indent=2),
             code_signals=json.dumps(code_analysis, indent=2),
             code=code,
+            retrieved_incidents=json.dumps(retrieved_incidents or [], indent=2),
         )
 
         try:

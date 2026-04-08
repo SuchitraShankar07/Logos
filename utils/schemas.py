@@ -67,6 +67,7 @@ class JudgeOutput(BaseModel):
 
 
 class PipelineOutput(BaseModel):
+    retrieved_incidents: list[dict] = Field(default_factory=list)
     log_analysis: LogAnalysisOutput
     code_analysis: CodeAnalysisOutput
     hypotheses: list[HypothesisOutput]
