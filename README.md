@@ -81,7 +81,7 @@ Set environment variables in `.env`:
 
 ```bash
 GEMINI_API_KEY=<your_key>
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-2.0-flash
 GEMINI_TEMPERATURE=0.2
 
 DB_HOST=<alloydb_or_postgres_host>
@@ -89,10 +89,13 @@ DB_PORT=5432
 DB_NAME=debugger
 DB_USER=postgres
 DB_PASSWORD=<password>
+DB_CONNECT_TIMEOUT=3
+# DB_SSLMODE=require
 ```
 
 Note: If `GEMINI_API_KEY` is not set, the system runs in heuristic fallback mode so demo still works.
 If DB vars are missing, memory retrieval/storage is skipped safely.
+If DB is configured but unreachable, `DB_CONNECT_TIMEOUT` avoids long startup/request hangs.
 
 ## 5) Run Locally (CLI)
 
@@ -128,7 +131,7 @@ The CLI prints clear, step-by-step execution logs with rich formatting:
 Run FastAPI server locally:
 
 ```bash
-uvicorn server:app --reload --port 8000
+.venv/bin/python -m uvicorn server:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Health check:
@@ -237,3 +240,25 @@ Some constants are intentionally fixed for demo reliability:
 - Code: `demo/sample_code.py`
 
 These reproduce a realistic incident pattern around DB timeout + connection pool exhaustion + retry amplification.
+
+## 13) Troubleshooting
+
+`[vite] http proxy error: /debug` with `ECONNREFUSED` means frontend cannot reach backend.
+
+```bash
+# 1) Start backend in the project venv
+source .venv/bin/activate
+python -m uvicorn server:app --host 127.0.0.1 --port 8000
+
+# 2) In another terminal, verify backend
+curl http://127.0.0.1:8000/health
+
+# 3) Start frontend
+cd frontend
+npm run dev
+```
+
+If health fails:
+- install deps into `.venv` (`pip install -r requirements.txt`)
+- ensure nothing else is using port `8000`
+- lower DB timeout to fail fast when DB is unavailable (`DB_CONNECT_TIMEOUT=1`).

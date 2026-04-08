@@ -5,3 +5,4 @@ __pycache__/
 .env.example
 .env
 .codex
+node_modules

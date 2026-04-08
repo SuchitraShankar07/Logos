@@ -16,17 +16,24 @@ def _get_connection():
     dbname = os.getenv("DB_NAME")
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
+    connect_timeout = int(os.getenv("DB_CONNECT_TIMEOUT", "3"))
+    sslmode = os.getenv("DB_SSLMODE")
 
     if not all([host, dbname, user, password]):
         raise RuntimeError("Database environment variables are not fully configured")
 
-    conn = psycopg2.connect(
-        host=host,
-        port=port,
-        dbname=dbname,
-        user=user,
-        password=password,
-    )
+    connect_kwargs: dict[str, Any] = {
+        "host": host,
+        "port": port,
+        "dbname": dbname,
+        "user": user,
+        "password": password,
+        "connect_timeout": connect_timeout,
+    }
+    if sslmode:
+        connect_kwargs["sslmode"] = sslmode
+
+    conn = psycopg2.connect(**connect_kwargs)
     try:
         yield conn
     finally:
